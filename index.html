@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Birthday Surprise! 🎂</title>
-    <!-- Favicon remains the Cake Emoji -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
+
+    <!-- Meta Tags for Link Preview (Ensures Gi01.gif shows in WhatsApp/Social popups) -->
+    <meta property="og:title" content="A Birthday Surprise For You! 🎂">
+    <meta property="og:description" content="Click to open your special surprise!">
+    <meta property="og:image" content="Gi01.gif">
+    <meta property="og:type" content="website">
+
+    <!-- GIF Favicon -->
+    <link rel="icon" type="image/gif" href="Gi01.gif">
+    
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Oswald:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --pink: #ff007f;
@@ -22,7 +31,7 @@
             background: var(--dark);
             color: #fff;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Prevents bounce scrolling during drag */
+            overflow-x: hidden; 
             width: 100%; height: 100%;
         }
 
@@ -47,12 +56,28 @@
             background: radial-gradient(circle, #1a1a3a, #050510);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            z-index: 2000; transition: 0.8s ease-out;
+            z-index: 2000; transition: 0.6s ease-out;
         }
-        .gift-box { font-size: 120px; filter: drop-shadow(0 0 30px var(--pink)); animation: bounce 1s infinite alternate; cursor: pointer; }
-        .gift-hint { margin-top: 10px; font-size: 0.9rem; color: var(--gold); font-weight: bold; animation: pulseHint 1.5s infinite; }
+        .gift-box { 
+            font-size: 120px; 
+            filter: drop-shadow(0 0 30px var(--pink)); 
+            animation: bounce 1s infinite alternate; 
+            cursor: pointer; 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-20px) scale(1.1); } }
+        @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-20px) scale(1.05); } }
+        
+        /* Click Animations */
+        .gift-shake { animation: shake 0.4s ease-in-out infinite !important; }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg) scale(1.1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            75% { transform: rotate(10deg) scale(1.1); }
+        }
+        .gift-pop { transform: scale(8) !important; opacity: 0; transition: 0.5s ease-out; }
+
+        .gift-hint { margin-top: 10px; font-size: 0.9rem; color: var(--gold); font-weight: bold; animation: pulseHint 1.5s infinite; }
         @keyframes pulseHint { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
         
         /* --- CONTENT LAYOUT --- */
@@ -60,11 +85,13 @@
             display: none; position: relative; z-index: 10;
             flex-direction: column; align-items: center;
             padding: 40px 20px; width: 100%; box-sizing: border-box;
-            height: 100vh; overflow-y: auto;
+            min-height: 100vh; overflow-y: auto;
         }
 
+        .top-gif { width: 120px; height: auto; margin-bottom: 10px; }
+
         .status-badge { background: var(--pink); color: white; padding: 8px 25px; border-radius: 50px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; box-shadow: 0 0 20px var(--pink); }
-        .bday-title { font-family: 'Oswald', sans-serif; font-size: 2.5rem; text-align: center; color: var(--gold); margin: 10px 0; line-height: 1.1; }
+        .bday-title { font-family: 'Oswald', sans-serif; font-size: 2.2rem; text-align: center; color: var(--gold); margin: 10px 0; line-height: 1.1; }
 
         .platinum-frame { width: 250px; height: 250px; padding: 10px; background: linear-gradient(145deg, #fff, #bdc3c7, #fff); border-radius: 50%; box-shadow: 0 0 50px rgba(255,255,255,0.2); margin: 20px 0; display: flex; align-items: center; justify-content: center; }
         .platinum-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid #fff; }
@@ -126,26 +153,34 @@
     </div>
 
     <!-- GIFT PAGE -->
-    <div id="gift-page" onclick="openGift()">
-        <div class="gift-box">🎁</div>
-        <div class="gift-hint">Touch Anywhere to Begin Surprise</div>
+    <div id="gift-page">
+        <div class="gift-box" onclick="handleGiftClick()">🎁</div>
+        <div class="gift-hint">Tap to Open Your Surprise</div>
         <h1 style="text-align:center; font-family:'Oswald'; color:var(--gold); margin-top: 25px;">A SURPRISE FOR <br><span id="landing-name" style="color:#fff">YOU</span></h1>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content" id="main-content">
-        <div id="wish-status" class="status-badge">Birthday Wish</div>
-        <h1 class="bday-title">🎂 Happy Birthday <br><span id="display-pname">Friend</span></h1>
+        <!-- Header GIF -->
+        <img src="Gi01.gif" alt="Celebration GIF" class="top-gif">
+        
+        <div id="wish-status" class="status-badge">Birthday Surprise</div>
+        
+        <!-- Birthday line with Cake Emojis -->
+        <h1 class="bday-title">🎂 Happy Birthday 🎂<br><span id="display-pname" style="color:#fff">Friend</span></h1>
+        
         <div id="date-line" style="color: var(--cyan); font-weight: bold; margin-bottom: 10px;"></div>
         <div class="platinum-frame"><img id="display-img" src="" alt="Photo"></div>
+        
         <div class="wish-container">
             <p id="dynamic-msg" style="font-size: 1.1rem; line-height: 1.6;"></p>
             <span id="sender-display"></span>
         </div>
+        
         <button class="btn-main btn-create" style="width: 90%; margin-bottom: 40px;" onclick="showCreator()">✨ Create Your Own Surprise ✨</button>
     </div>
 
-    <!-- CREATOR PAGE -->
+    <!-- CREATOR PAGE (Full Restored Data) -->
     <div id="creator-page">
         <h2 style="color:var(--gold); margin-top: 0;">Wish Creator</h2>
         <div class="form-card">
@@ -174,7 +209,7 @@
         </div>
     </div>
 
-    <!-- HOW-TO MODAL -->
+    <!-- HOW-TO MODAL (Full Restored Data) -->
     <div id="how-to-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeHowTo()">&times;</span>
@@ -191,11 +226,10 @@
         const music = document.getElementById('bg-music');
         const params = new URLSearchParams(window.location.search);
         
-        // Modal Logic
         function openHowTo() { document.getElementById('how-to-modal').style.display = 'flex'; }
         function closeHowTo() { document.getElementById('how-to-modal').style.display = 'none'; }
 
-        // Load Initial Data
+        // Initial Data Loading
         const pName = params.get('pname') || "Special Someone";
         const pDateStr = params.get('date');
         const sName = params.get('sname') || "Your Best Friend";
@@ -207,32 +241,52 @@
         document.getElementById('sender-display').innerText = `--- by ${sName}`;
         document.getElementById('display-img').src = pImg;
 
-        function openGift() {
-            music.play().catch(() => console.log("Audio needs interaction"));
-            document.getElementById('gift-page').style.opacity = '0';
+        function handleGiftClick() {
+            const gift = document.querySelector('.gift-box');
+            gift.classList.add('gift-shake');
+            music.play().catch(() => {});
+            
             setTimeout(() => {
-                document.getElementById('gift-page').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-                calculateStatus();
-                triggerExplodingConfetti();
-            }, 800);
+                gift.classList.remove('gift-shake');
+                gift.classList.add('gift-pop');
+                
+                setTimeout(() => {
+                    document.getElementById('gift-page').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('gift-page').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'flex';
+                        calculateStatus();
+                        triggerExplodingConfetti();
+                    }, 400);
+                }, 300);
+            }, 600);
         }
 
         function calculateStatus() {
             const today = new Date(); today.setHours(0,0,0,0);
-            const bday = pDateStr ? new Date(pDateStr) : today; 
-            bday.setHours(0,0,0,0);
-            document.getElementById('date-line').innerText = bday.toDateString();
             const badge = document.getElementById('wish-status');
             const msgEl = document.getElementById('dynamic-msg');
+            
+            if (pDateStr) {
+                const bday = new Date(pDateStr); 
+                bday.setHours(0,0,0,0);
+                document.getElementById('date-line').innerText = bday.toDateString();
+                
+                const checkBday = new Date(bday); 
+                checkBday.setFullYear(today.getFullYear());
 
-            if (customMsg) {
-                msgEl.innerText = customMsg;
-                badge.innerText = "Special Message ✨";
+                if (checkBday.getTime() === today.getTime()) {
+                    badge.innerText = "The Big Day ✨";
+                    msgEl.innerText = customMsg || "Today is the day! Wishing you a year full of magic and success.";
+                } else if (checkBday.getTime() > today.getTime()) {
+                    badge.innerText = "Advanced Wish ⏳";
+                    msgEl.innerText = customMsg || "Sending this early because you deserve a celebration that starts now!";
+                } else {
+                    badge.innerText = "Belated Wish 🎈";
+                    msgEl.innerText = customMsg || "The party doesn't stop just because the date passed! Hope it was incredible.";
+                }
             } else {
-                if (bday > today) { badge.innerText = "Advanced Wish ⏳"; msgEl.innerText = "Sending this early because you deserve a long celebration!"; }
-                else if (bday < today) { badge.innerText = "Belated Wish 🎈"; msgEl.innerText = "The celebration doesn't stop just because the date passed!"; }
-                else { badge.innerText = "The Big Day ✨"; msgEl.innerText = "Today is the day! Wishing you a year full of magic."; }
+                msgEl.innerText = customMsg || "Wishing you a day full of love and laughter!";
             }
         }
 
@@ -261,13 +315,11 @@
 
         function copyLink() { navigator.clipboard.writeText(window.generatedUrl); alert("Magical Link Copied!"); }
 
-        // --- ENHANCED EXPLODING CONFETTI ---
         function triggerExplodingConfetti() {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             let particles = [];
-
             class Particle {
                 constructor(isBurst) {
                     this.x = isBurst ? canvas.width/2 : Math.random() * canvas.width;
@@ -280,67 +332,47 @@
                     this.opacity = 1;
                 }
                 update() {
-                    this.speedY += this.gravity;
-                    this.x += this.speedX;
-                    this.y += this.speedY;
+                    this.speedY += this.gravity; this.x += this.speedX; this.y += this.speedY;
                     if(this.opacity > 0) this.opacity -= 0.005;
                 }
                 draw() {
-                    ctx.globalAlpha = this.opacity;
-                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.opacity; ctx.fillStyle = this.color;
                     ctx.fillRect(this.x, this.y, this.size, this.size);
                 }
             }
-
-            for(let i=0; i<150; i++) particles.push(new Particle(true)); // Initial Burst
-
+            for(let i=0; i<150; i++) particles.push(new Particle(true));
             function animate() {
                 ctx.clearRect(0,0,canvas.width, canvas.height);
                 particles.forEach((p, i) => {
                     p.update(); p.draw();
                     if(p.y > canvas.height || p.opacity <= 0) particles.splice(i, 1);
                 });
-                if(particles.length < 100) particles.push(new Particle(false)); // Steady Fall
+                if(particles.length < 100) particles.push(new Particle(false));
                 requestAnimationFrame(animate);
             }
             animate();
         }
 
-        // --- DRAGGABLE PROFILE ICON LOGIC ---
         const dragItem = document.getElementById("floating-profile");
         let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
-
         function dragStart(e) {
             initialX = (e.type === "touchstart" ? e.touches[0].clientX : e.clientX) - xOffset;
             initialY = (e.type === "touchstart" ? e.touches[0].clientY : e.clientY) - yOffset;
             if (e.target === dragItem || dragItem.contains(e.target)) active = true;
         }
-
         function dragEnd() { initialX = currentX; initialY = currentY; active = false; }
-
         function drag(e) {
             if (active) {
                 e.preventDefault();
                 currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
                 currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
-                
-                // Boundary check (keep on screen)
-                const rect = dragItem.getBoundingClientRect();
-                if (rect.left < 0) currentX = xOffset;
-                if (rect.top < 0) currentY = yOffset;
-
                 xOffset = currentX; yOffset = currentY;
                 dragItem.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
             }
         }
-
-        document.addEventListener("touchstart", dragStart, false);
-        document.addEventListener("touchend", dragEnd, false);
-        document.addEventListener("touchmove", drag, false);
-        document.addEventListener("mousedown", dragStart, false);
-        document.addEventListener("mouseup", dragEnd, false);
-        document.addEventListener("mousemove", drag, false);
-
+        document.addEventListener("touchstart", dragStart, false); document.addEventListener("touchend", dragEnd, false);
+        document.addEventListener("touchmove", drag, false); document.addEventListener("mousedown", dragStart, false);
+        document.addEventListener("mouseup", dragEnd, false); document.addEventListener("mousemove", drag, false);
     </script>
 </body>
 </html>
