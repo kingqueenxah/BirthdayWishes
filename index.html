@@ -33,6 +33,7 @@
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden; 
             width: 100%; height: 100%;
+            user-select: none;
         }
 
         #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
@@ -49,17 +50,20 @@
             z-index: 100;
         }
 
-        /* --- MOVABLE FLOATING ICON --- */
+        /* --- MOVABLE FLOATING ICON (Optimized for Smoothness) --- */
         #floating-profile {
             position: fixed; bottom: 30px; right: 20px;
             width: 65px; height: 65px;
             border-radius: 50%; z-index: 10000;
             border: 3px solid var(--gold);
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            cursor: move; overflow: hidden;
+            cursor: grab; overflow: hidden;
             touch-action: none; 
             background: #000;
+            will-change: transform;
+            transition: transform 0.1s ease-out, box-shadow 0.3s;
         }
+        #floating-profile:active { cursor: grabbing; transform: scale(1.1); }
         #floating-profile img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
         /* --- STAGE 1: GIFT --- */
@@ -99,6 +103,20 @@
         .top-gif { width: 120px; height: auto; margin-bottom: 10px; }
         .status-badge { background: var(--pink); color: white; padding: 8px 25px; border-radius: 50px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; box-shadow: 0 0 20px var(--pink); }
         .bday-title { font-family: 'Oswald', sans-serif; font-size: 2.2rem; text-align: center; color: var(--gold); margin: 10px 0; line-height: 1.1; }
+        
+        /* Countdown Styles */
+        #countdown-timer {
+            font-family: 'Oswald', sans-serif;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--cyan);
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border: 1px solid var(--cyan);
+            letter-spacing: 1px;
+        }
+
         .platinum-frame { width: 250px; height: 250px; padding: 10px; background: linear-gradient(145deg, #fff, #bdc3c7, #fff); border-radius: 50%; box-shadow: 0 0 50px rgba(255,255,255,0.2); margin: 20px 0; display: flex; align-items: center; justify-content: center; }
         .platinum-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid #fff; }
         .wish-container { width: 100%; max-width: 450px; background: var(--glass); backdrop-filter: blur(15px); padding: 25px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; margin: 20px 0; }
@@ -131,12 +149,11 @@
 
     <!-- MOVABLE PROFILE ICON -->
     <div id="floating-profile">
-        <a href="https://whatsapp.com/channel/0029Vb78zYqKgsNr0iIMo93f" target="_blank"><img src="php1.jpg" alt="Dev"></a>
+        <a href="https://whatsapp.com/channel/0029Vb7duaC6WaKmnxObL30f" target="_blank"><img src="php1.jpg" alt="Dev"></a>
     </div>
 
     <!-- GIFT PAGE (STAGE 1) -->
     <div id="gift-page">
-        <!-- AD 1: TOP OF GIFT PAGE -->
         <div class="ad-zone">
             <script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script>
             <script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script>
@@ -144,9 +161,9 @@
 
         <div class="gift-box" onclick="handleGiftClick()">🎁</div>
         <div class="gift-hint">Tap to Open Your Surprise</div>
-        <h1 style="text-align:center; font-family:'Oswald'; color:var(--gold); margin-top: 25px;">A SURPRISE FOR <br><span id="landing-name" style="color:#fff">YOU</span></h1>
+        <!-- UPDATED LINE BELOW -->
+        <h1 style="text-align:center; font-family:'Oswald'; color:var(--gold); margin-top: 25px;">A BIRTHDAY SURPRISE FOR <br><span id="landing-name" style="color:#fff">YOU</span></h1>
 
-        <!-- AD 2: BOTTOM OF ALL ELEMENTS ON GIFT PAGE -->
         <div class="ad-zone">
             <script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script>
             <script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script>
@@ -157,21 +174,26 @@
         <img src="Gi01.gif" alt="Celebration GIF" class="top-gif">
         <div id="wish-status" class="status-badge">Birthday Surprise</div>
 
-        <!-- AD 3: BETWEEN STATUS BADGE AND HAPPY BIRTHDAY LINE -->
         <div class="ad-zone">
             <script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script>
             <script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script>
         </div>
         
         <h1 class="bday-title">🎂 Happy Birthday 🎂<br><span id="display-pname" style="color:#fff">Friend</span></h1>
-        <div id="date-line" style="color: var(--cyan); font-weight: bold; margin-bottom: 10px;"></div>
+        
+        <!-- Updated Date Display -->
+        <div id="date-line" style="color: var(--cyan); font-weight: bold; margin-bottom: 5px; font-size: 1.1rem;"></div>
+        
+        <!-- Countdown Timer (Only shows if Early) -->
+        <div id="countdown-timer" style="display: none;"></div>
+
         <div class="platinum-frame"><img id="display-img" src="" alt="Photo"></div>
+        
         <div class="wish-container">
             <p id="dynamic-msg" style="font-size: 1.1rem; line-height: 1.6;"></p>
             <span id="sender-display"></span>
         </div>
 
-        <!-- AD 4: BEFORE CREATE YOUR OWN SURPRISE BUTTON -->
         <div class="ad-zone">
             <script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script>
             <script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script>
@@ -191,7 +213,7 @@
             <label>Your Name</label>
             <input type="text" id="in-sname" placeholder="Your Name">
             <label>Personal Message (Optional)</label>
-            <textarea id="in-msg" rows="2" placeholder="Write something special..."></textarea>
+            <textarea id="in-msg" rows="2" placeholder="Write something special... (Leave blank for random magic)"></textarea>
             <label>Photo URL (Direct Link)</label>
             <input type="text" id="in-img" placeholder="Paste link ending in .jpg or .png">
             <div class="tip-banner-guard">
@@ -206,34 +228,18 @@
         </div>
     </div>
 
-    <!-- HOW-TO MODAL (QUESTION MARK PAGE) -->
+    <!-- HOW-TO MODAL -->
     <div id="how-to-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeHowTo()">&times;</span>
             <h3 style="color:var(--gold); text-align:center; margin-top:0;">How to Upload Image</h3>
-            
             <div class="step-box">
                 <img src="How01.png" alt="1"><p><strong>1:</strong> Click 'START UPLOADING'</p>
-                <!-- AD 5: AFTER STEP 1 -->
                 <div class="ad-zone"><script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script></div>
             </div>
-
-            <div class="step-box">
-                <img src="How02.png" alt="2"><p><strong>2:</strong> Select image and click 'UPLOAD'</p>
-                <!-- AD 6: AFTER STEP 2 -->
-                <div class="ad-zone"><script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script></div>
-            </div>
-
-            <div class="step-box">
-                <img src="How03.png" alt="3"><p><strong>3:</strong> Click on your uploaded image</p>
-                <!-- AD 7: AFTER STEP 3 -->
-                <div class="ad-zone"><script type="text/javascript">atOptions={'key':'daf1ff30b988f8fc144d73140a3bb3e7','format':'iframe','height':50,'width':320,'params':{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script></div>
-            </div>
-
-            <div class="step-box">
-                <img src="How04.png" alt="4"><p><strong>4:</strong> Copy the link ending in .png or .jpg</p>
-            </div>
-
+            <div class="step-box"><img src="How02.png" alt="2"><p><strong>2:</strong> Select image and click 'UPLOAD'</p></div>
+            <div class="step-box"><img src="How03.png" alt="3"><p><strong>3:</strong> Click on your uploaded image</p></div>
+            <div class="step-box"><img src="How04.png" alt="4"><p><strong>4:</strong> Copy the link ending in .png or .jpg</p></div>
             <button class="btn-main" style="background:var(--cyan); color:#000;" onclick="closeHowTo()">Got it!</button>
         </div>
     </div>
@@ -241,6 +247,48 @@
     <script>
         const music = document.getElementById('bg-music');
         const params = new URLSearchParams(window.location.search);
+        
+        // Random Message Pool
+        const messages = {
+            onTime: [
+                "Wishing you a day filled with happiness and a year filled with joy!",
+                "May your birthday be as special as you are to everyone who knows you.",
+                "Today is the oldest you've ever been, and the youngest you'll ever be again. Enjoy!",
+                "Sending you smiles for every moment of your special day!",
+                "Happy Birthday! May all your dreams and wishes come true."
+            ],
+            early: [
+                "I couldn't wait! Sending you early birthday vibes and lots of love.",
+                "Wanted to be the first one to wish you! Happy Birthday in advance!",
+                "The celebration starts now! Getting an early head start on your special day.",
+                "Early wishes for a person who deserves the best all year round!"
+            ],
+            late: [
+                "The party doesn't stop until I say so! Happy Belated Birthday!",
+                "Sorry I missed the big day, but I'm extending the celebration just for you!",
+                "A birthday wish that's late but filled with even more love!",
+                "Good things come to those who wait, right? Happy Belated Birthday!"
+            ]
+        };
+
+        function getSuffix(day) {
+            if (day > 3 && day < 21) return 'th';
+            switch (day % 10) {
+                case 1:  return "st";
+                case 2:  return "nd";
+                case 3:  return "rd";
+                default: return "th";
+            }
+        }
+
+        function formatDateAdvanced(dateObj) {
+            const day = dateObj.getDate();
+            const month = dateObj.toLocaleString('default', { month: 'long' });
+            const year = dateObj.getFullYear();
+            const weekday = dateObj.toLocaleString('default', { weekday: 'long' });
+            return `${day}${getSuffix(day)} ${month}, ${year} (${weekday})`;
+        }
+
         function openHowTo() { document.getElementById('how-to-modal').style.display = 'flex'; }
         function closeHowTo() { document.getElementById('how-to-modal').style.display = 'none'; }
 
@@ -277,18 +325,50 @@
             const today = new Date(); today.setHours(0,0,0,0);
             const badge = document.getElementById('wish-status');
             const msgEl = document.getElementById('dynamic-msg');
+            const dateLine = document.getElementById('date-line');
+            
             if (pDateStr) {
                 const bday = new Date(pDateStr); bday.setHours(0,0,0,0);
-                document.getElementById('date-line').innerText = bday.toDateString();
-                const checkBday = new Date(bday); checkBday.setFullYear(today.getFullYear());
-                if (checkBday.getTime() === today.getTime()) { badge.innerText = "The Big Day ✨"; msgEl.innerText = customMsg || "Today is the day! Wishing you magic."; }
-                else if (checkBday.getTime() > today.getTime()) { badge.innerText = "Advanced Wish ⏳"; msgEl.innerText = customMsg || "Sending this early!"; }
-                else { badge.innerText = "Belated Wish 🎈"; msgEl.innerText = customMsg || "The party doesn't stop!"; }
-            } else { msgEl.innerText = customMsg || "Wishing you love and laughter!"; }
+                dateLine.innerText = formatDateAdvanced(bday);
+                
+                const checkBday = new Date(bday); 
+                checkBday.setFullYear(today.getFullYear());
+
+                if (checkBday.getTime() === today.getTime()) {
+                    badge.innerText = "The Big Day ✨";
+                    msgEl.innerText = customMsg || messages.onTime[Math.floor(Math.random() * messages.onTime.length)];
+                } else if (checkBday.getTime() > today.getTime()) {
+                    badge.innerText = "Advanced Wish ⏳";
+                    msgEl.innerText = customMsg || messages.early[Math.floor(Math.random() * messages.early.length)];
+                    startCountdown(checkBday);
+                } else {
+                    badge.innerText = "Belated Wish 🎈";
+                    msgEl.innerText = customMsg || messages.late[Math.floor(Math.random() * messages.late.length)];
+                }
+            } else {
+                msgEl.innerText = customMsg || "Wishing you love and laughter!";
+            }
+        }
+
+        function startCountdown(targetDate) {
+            const timerEl = document.getElementById('countdown-timer');
+            timerEl.style.display = 'inline-block';
+            function update() {
+                const now = new Date().getTime();
+                const dist = targetDate.getTime() - now;
+                if (dist < 0) { timerEl.style.display = 'none'; return; }
+                const d = Math.floor(dist / (1000 * 60 * 60 * 24));
+                const h = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((dist % (1000 * 60)) / 1000);
+                timerEl.innerText = `Starts In: ${d}d ${h}h ${m}m ${s}s`;
+            }
+            setInterval(update, 1000); update();
         }
 
         function toggleMusic() { if(music.paused) { music.play(); document.getElementById('music-btn').innerText = "🎵"; } else { music.pause(); document.getElementById('music-btn').innerText = "🔇"; } }
         function showCreator() { document.getElementById('main-content').style.display = 'none'; document.getElementById('creator-page').style.display = 'flex'; }
+        
         function generateLink() {
             const pn = encodeURIComponent(document.getElementById('in-pname').value);
             const dt = encodeURIComponent(document.getElementById('in-date').value);
@@ -330,12 +410,46 @@
             animate();
         }
 
+        // --- Smooth Movable Icon Logic ---
         const dragItem = document.getElementById("floating-profile");
         let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
-        function dragStart(e) { initialX = (e.type === "touchstart" ? e.touches[0].clientX : e.clientX) - xOffset; initialY = (e.type === "touchstart" ? e.touches[0].clientY : e.clientY) - yOffset; if (e.target === dragItem || dragItem.contains(e.target)) active = true; }
+
+        function dragStart(e) {
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+            if (e.target === dragItem || dragItem.contains(e.target)) active = true;
+        }
+
         function dragEnd() { initialX = currentX; initialY = currentY; active = false; }
-        function drag(e) { if (active) { e.preventDefault(); currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX; currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY; xOffset = currentX; yOffset = currentY; dragItem.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`; } }
-        document.addEventListener("touchstart", dragStart, false); document.addEventListener("touchend", dragEnd, false); document.addEventListener("touchmove", drag, false); document.addEventListener("mousedown", dragStart, false); document.addEventListener("mouseup", dragEnd, false); document.addEventListener("mousemove", drag, false);
+
+        function drag(e) {
+            if (active) {
+                e.preventDefault();
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                xOffset = currentX; yOffset = currentY;
+                requestAnimationFrame(() => {
+                    dragItem.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+                });
+            }
+        }
+
+        document.addEventListener("touchstart", dragStart, {passive: false});
+        document.addEventListener("touchend", dragEnd, {passive: false});
+        document.addEventListener("touchmove", drag, {passive: false});
+        document.addEventListener("mousedown", dragStart, false);
+        document.addEventListener("mouseup", dragEnd, false);
+        document.addEventListener("mousemove", drag, false);
     </script>
 </body>
 </html>
