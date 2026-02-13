@@ -50,21 +50,22 @@
             z-index: 100;
         }
 
-        /* --- MOVABLE FLOATING ICON (Optimized for Smoothness) --- */
+        /* --- MOVABLE FLOATING ICON --- */
         #floating-profile {
             position: fixed; bottom: 30px; right: 20px;
             width: 65px; height: 65px;
             border-radius: 50%; z-index: 10000;
             border: 3px solid var(--gold);
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            cursor: grab; overflow: hidden;
+            cursor: pointer; overflow: hidden;
             touch-action: none; 
             background: #000;
             will-change: transform;
             transition: transform 0.1s ease-out, box-shadow 0.3s;
         }
-        #floating-profile:active { cursor: grabbing; transform: scale(1.1); }
+        #floating-profile:active { transform: scale(1.1); }
         #floating-profile img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        #floating-profile a { display: block; width: 100%; height: 100%; }
 
         /* --- STAGE 1: GIFT --- */
         #gift-page {
@@ -161,7 +162,6 @@
 
         <div class="gift-box" onclick="handleGiftClick()">🎁</div>
         <div class="gift-hint">Tap to Open Your Surprise</div>
-        <!-- UPDATED LINE BELOW -->
         <h1 style="text-align:center; font-family:'Oswald'; color:var(--gold); margin-top: 25px;">A BIRTHDAY SURPRISE FOR <br><span id="landing-name" style="color:#fff">YOU</span></h1>
 
         <div class="ad-zone">
@@ -169,6 +169,7 @@
             <script type="text/javascript" src="https://www.highperformanceformat.com/daf1ff30b988f8fc144d73140a3bb3e7/invoke.js"></script>
         </div>
     </div>
+
     <!-- MAIN CONTENT (STAGE 2) -->
     <div class="main-content" id="main-content">
         <img src="Gi01.gif" alt="Celebration GIF" class="top-gif">
@@ -181,10 +182,11 @@
         
         <h1 class="bday-title">🎂 Happy Birthday 🎂<br><span id="display-pname" style="color:#fff">Friend</span></h1>
         
-        <!-- Updated Date Display -->
+        <!-- REQUESTED LINE ADDED BELOW -->
+        <p style="margin: 0px 0 5px 0; font-size: 1.1rem; color: #fff; font-weight: 500;">wishing you a warm Happy Birthday on</p>
+        
         <div id="date-line" style="color: var(--cyan); font-weight: bold; margin-bottom: 5px; font-size: 1.1rem;"></div>
         
-        <!-- Countdown Timer (Only shows if Early) -->
         <div id="countdown-timer" style="display: none;"></div>
 
         <div class="platinum-frame"><img id="display-img" src="" alt="Photo"></div>
@@ -243,7 +245,6 @@
             <button class="btn-main" style="background:var(--cyan); color:#000;" onclick="closeHowTo()">Got it!</button>
         </div>
     </div>
-
     <script>
         const music = document.getElementById('bg-music');
         const params = new URLSearchParams(window.location.search);
@@ -410,11 +411,13 @@
             animate();
         }
 
-        // --- Smooth Movable Icon Logic ---
+        // --- Optimized Movable Icon Logic (Allows Single Click Redirection) ---
         const dragItem = document.getElementById("floating-profile");
         let active = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+        let isDragging = false;
 
         function dragStart(e) {
+            isDragging = false;
             if (e.type === "touchstart") {
                 initialX = e.touches[0].clientX - xOffset;
                 initialY = e.touches[0].clientY - yOffset;
@@ -425,24 +428,37 @@
             if (e.target === dragItem || dragItem.contains(e.target)) active = true;
         }
 
-        function dragEnd() { initialX = currentX; initialY = currentY; active = false; }
+        function dragEnd() { 
+            initialX = currentX; initialY = currentY; active = false; 
+            setTimeout(() => { isDragging = false; }, 50);
+        }
 
         function drag(e) {
             if (active) {
-                e.preventDefault();
-                if (e.type === "touchmove") {
-                    currentX = e.touches[0].clientX - initialX;
-                    currentY = e.touches[0].clientY - initialY;
-                } else {
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
+                let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+                let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+                
+                currentX = clientX - initialX;
+                currentY = clientY - initialY;
+
+                // Threshold to determine if it's a drag or just a click
+                if (Math.abs(currentX - (clientX - initialX)) > 1 || Math.abs(currentY - (clientY - initialY)) > 1) {
+                    isDragging = true;
                 }
+
                 xOffset = currentX; yOffset = currentY;
                 requestAnimationFrame(() => {
                     dragItem.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
                 });
             }
         }
+
+        // Intercept clicks to prevent redirect only if user was actually dragging
+        dragItem.addEventListener('click', function(e) {
+            if (isDragging) {
+                e.preventDefault();
+            }
+        });
 
         document.addEventListener("touchstart", dragStart, {passive: false});
         document.addEventListener("touchend", dragEnd, {passive: false});
